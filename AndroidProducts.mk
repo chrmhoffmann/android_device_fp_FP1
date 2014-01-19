@@ -1,2 +1,2 @@
 PRODUCT_MAKEFILES := \
-    $(LOCAL_DIR)/full_fp1.mk
+    $(LOCAL_DIR)/full_FP1.mk

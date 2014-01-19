@@ -12,9 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-DEVICE_FOLDER := device/fairphone/fp1
+DEVICE_FOLDER := device/fairphone/FP1
 
--include vendor/fairphone/fp1/BoardConfigVendor.mk
+-include vendor/fairphone/FP1/BoardConfigVendor.mk
 
 TARGET_ARCH := arm
 TARGET_CPU_ABI := armeabi-v7a
@@ -31,7 +31,7 @@ BOARD_KERNEL_PAGESIZE := 2048
 BOARD_FLASH_BLOCK_SIZE := 512
 
 # EGL settings
-BOARD_EGL_CFG := device/fairphone/fp1/egl.cfg
+BOARD_EGL_CFG := device/fairphone/FP1/egl.cfg
 USE_OPENGL_RENDERER := true
 
 TARGET_PREBUILT_KERNEL := $(DEVICE_FOLDER)/prebuilt/kernel
@@ -51,7 +51,7 @@ BOARD_HAS_NO_SELECT_BUTTON := true
 BOARD_CUSTOM_BOOTIMG_MK := $(DEVICE_FOLDER)/boot.mk
 
 TARGET_RELEASETOOL_OTA_FROM_TARGET_SCRIPT := \
-	$(DEVICE_FOLDER)/releasetools/fp1_ota_from_target_files
+	$(DEVICE_FOLDER)/releasetools/FP1_ota_from_target_files
 
 # wifi
 BOARD_WPA_SUPPLICANT_DRIVER := WEXT

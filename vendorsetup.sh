@@ -14,5 +14,5 @@
 # limitations under the License.
 #
 
-add_lunch_combo full_fp1-userdebug
-add_lunch_combo cm_fp1-userdebug
+add_lunch_combo full_FP1-userdebug
+add_lunch_combo cm_FP1-userdebug

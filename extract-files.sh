@@ -1,7 +1,7 @@
 #!/bin/sh
 
 VENDOR=fairphone
-DEVICE=fp1
+DEVICE=FP1
 
 BASE=../../../vendor/$VENDOR/$DEVICE/proprietary
 

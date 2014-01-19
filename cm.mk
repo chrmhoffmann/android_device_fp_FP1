@@ -13,15 +13,15 @@
 # limitations under the License.
 
 # Inherit device configuration
-$(call inherit-product, device/fairphone/fp1/full_fp1.mk)
+$(call inherit-product, device/fairphone/FP1/full_FP1.mk)
 $(call inherit-product-if-exists, vendor/cm/config/common_full_phone.mk)
 
 # Boot animation
 TARGET_SCREEN_HEIGHT := 1280
 TARGET_SCREEN_WIDTH := 720
 
-PRODUCT_NAME := cm_fp1
-PRODUCT_DEVICE := fp1
+PRODUCT_NAME := cm_FP1
+PRODUCT_DEVICE := FP1
 PRODUCT_MODEL := Fairphone FP1
 PRODUCT_RELEASE_NAME := FP1
 PRODUCT_BRAND := Android
