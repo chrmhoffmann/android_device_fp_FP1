@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-$(call inherit-product-if-exists, vendor/fp/FP1-vendor.mk)
+$(call inherit-product-if-exists, vendor/fp/FP1/FP1-vendor.mk)
 
 DEVICE_PACKAGE_OVERLAYS += $(LOCAL_PATH)/overlay/
 
@@ -98,7 +98,7 @@ PRODUCT_PROPERTY_OVERRIDES := \
 	ro.mediatek.wlan.wsc=1 \
 	ro.opengles.version=131072 \
 	ro.product.model=FP1 \
-	ro.sf.lcd_density=320 \
+	ro.sf.lcd_density=256 \
 	ro.telephony.ril_class=MediaTekRIL \
 	wifi.direct.interface=p2p0 \
 	wifi.interface=wlan0 \
