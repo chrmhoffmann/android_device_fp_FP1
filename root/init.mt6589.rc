@@ -522,6 +522,12 @@ service ami304d /system/bin/logwrapper /system/bin/ami304d
     disabled
     oneshot
 
+service memsicd3416x /system/bin/memsicd3416x
+    disabled
+    oneshot
+    user system
+    group system
+
 service memsicd /system/bin/memsicd
     disabled
     oneshot

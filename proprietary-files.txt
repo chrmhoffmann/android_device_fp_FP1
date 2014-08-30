@@ -127,6 +127,7 @@ lib/mtk-ril.so
 bin/msensord
 bin/ami304d
 bin/memsicd
+bin/memsicd3416x
 bin/akmd8975
 bin/akmd8963
 bin/bmm050d
