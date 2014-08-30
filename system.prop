@@ -1,0 +1,2 @@
+rild.libargs=-d /dev/ttyC0
+

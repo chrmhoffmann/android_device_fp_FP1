@@ -50,63 +50,69 @@ vendor/lib/libBLPP.so
 vendor/lib/hw/gralloc.mt6589.so
 
 lib/hw/hwcomposer.mt6589.so
-lib/hw/libaudio.r_submix.default.so
 lib/hw/gps.default.so
-lib/hw/libaudio.usb.default.so
 lib/hw/lights.default.so
 lib/hw/power.default.so
-lib/hw/audio.primary.default.so
-lib/hw/audio_policy.default.so
 lib/hw/local_time.default.so
 lib/hw/camera.default.so
 lib/hw/sensors.default.so
 lib/hw/gralloc.default.so
 lib/hw/keystore.default.so
-lib/hw/audio_policy.stub.so
+lib/libkeystore_client.so
 
 lib/libm4u.so
 lib/libdpframework.so
 lib/libdpframework_os.so
 lib/libdpframework_plat.so
-lib/libcutils.so
 lib/libion.so
 
-# lib/libaudiocustparam.so
+lib/libaudiocustparam.so
 # lib/libacdk.so
-# lib/libimageio.so
-# lib/libcamdrv.so
-# lib/libbwc.so
-# lib/libnetutils.so
-# lib/libcam.utils.so
-# lib/libcamera_client.so
-# lib/libaed.so
-# lib/libcameracustom.so
-# lib/liblog.so
-# lib/libcam_camera_exif.so
-# lib/libmatv_cust.so
-# lib/libfeatureio.so
-# lib/libcamalgo.so
-# lib/libmtk_drvb.so
-# lib/lib3a.so
-# lib/libcam.camshot.so
-# lib/libcam.campipe.so
-# lib/libJpgEncPipe.so
+lib/libimageio.so
+lib/libcamdrv.so
+lib/libbwc.so
+lib/libcam.utils.so
+lib/libcam.paramsmgr.so
+lib/libaed.so
+lib/libcameracustom.so
+lib/libcam_camera_exif.so
+lib/libmatv_cust.so
+lib/libfeatureio.so
+lib/libcamalgo.so
+lib/libmtk_drvb.so
+lib/lib3a.so
+lib/libcam.client.so
+lib/libmpo.so
+lib/libmpoencoder.so
+lib/libcam.camshot.so
+lib/libcam.campipe.so
+lib/libcam.camadapter.so
+lib/libJpgEncPipe.so
 # lib/libjpeg.so
 # lib/libmmfactoryutil.so
-# lib/libaudio.primary.default.so
-# lib/libblisrc.so
-# lib/libspeech_enh_lib.so
-# lib/libaudiosetting.so
-# lib/libaudiocompensationfilter.so
-# lib/libbessound_mtk.so
+lib/libblisrc.so
+lib/libspeech_enh_lib.so
+lib/libaudiosetting.so
+lib/libaudiocompensationfilter.so
+lib/libbessound_mtk.so
 # lib/libmedia.so
 # lib/libvcodec_oal.so
 # lib/libvcodec_utility.so
 # lib/libsched.so
 # lib/libmp4enc_xa.ca7.so
 
+bin/hald
 bin/wlan_loader
 bin/6620_launcher
+bin/stp_dump3
+bin/ccci_mdinit
+bin/ccci_fsd 
+bin/permission_check
+bin/muxreport 
+bin/rild
+bin/rildmd2
+bin/pppd_dt
+bin/pppd 
 
 bin/nvram_daemon
 bin/nvram_agent_binder
@@ -115,9 +121,30 @@ lib/libcustom_nvram.so
 lib/libnvram_daemon_callback.so
 lib/libfile_op.so
 lib/libhwm.so 
+lib/librilmtk.so
+lib/mtk-ril.so
 
-bin/wpa_supplicant
-lib/libwapi.so
+bin/msensord
+bin/ami304d
+bin/memsicd
+bin/akmd8975
+bin/akmd8963
+bin/bmm050d
+bin/orientationd
+bin/geomagneticd
+bin/thermal
+bin/thermal_manager
+
+bin/mtk_agpsd
+xbin/mnld
+xbin/libmnlp_mt6628
+lib/libssladp.so
+etc/agps_profiles_conf.xml
+
+etc/.tp/.ht120.mtc
+etc/.tp/thermal.conf
+etc/.tp/thermal.off.conf
+etc/throttle.sh
 
 etc/firmware/mt6628_patch_e2_1_hdr.bin
 etc/firmware/WIFI_RAM_CODE_E6
@@ -141,3 +168,6 @@ etc/firmware/S_ANDRO_SFL.ini
 etc/firmware/WIFI_RAM_CODE_MT6628
 etc/firmware/catcher_filter.bin
 etc/firmware/WMT.cfg
+etc/audio_policy.conf
+etc/audio_effects.conf
+etc/mtk_omx_core.cfg

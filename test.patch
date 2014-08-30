@@ -1,0 +1,72 @@
+diff --git a/proprietary-files.txt b/proprietary-files.txt
+index 13ebadf..5d3ea40 100644
+--- a/proprietary-files.txt
++++ b/proprietary-files.txt
+@@ -88,18 +88,21 @@ lib/libcam.camshot.so
+ lib/libcam.campipe.so
+ lib/libcam.camadapter.so
+ lib/libJpgEncPipe.so
+-# lib/libjpeg.so
+-# lib/libmmfactoryutil.so
+ lib/libblisrc.so
+ lib/libspeech_enh_lib.so
+ lib/libaudiosetting.so
+ lib/libaudiocompensationfilter.so
+ lib/libbessound_mtk.so
+-# lib/libmedia.so
+-# lib/libvcodec_oal.so
+-# lib/libvcodec_utility.so
+-# lib/libsched.so
+-# lib/libmp4enc_xa.ca7.so
++
++lib/libstagefrighthw.so 
++lib/libMtkOmxCore.so 
++lib/libMtkOmxVdec.so 
++lib/libMtkOmxAacDec.so 
++lib/libvcodecdrv.so 
++lib/libvcodec_oal.so 
++lib/libvcodec_utility.so  
++lib/libsched.so 
++lib/libmp4enc_xa.ca7.so
+ 
+ bin/hald
+ bin/wlan_loader
+diff --git a/ril/com/android/internal/telephony/MediaTekRIL.java b/ril/com/android/internal/telephony/MediaTekRIL.java
+index bf6d064..7b7a920 100644
+--- a/ril/com/android/internal/telephony/MediaTekRIL.java
++++ b/ril/com/android/internal/telephony/MediaTekRIL.java
+@@ -774,13 +774,19 @@ public class MediaTekRIL extends RIL implements CommandsInterface {
+             return;
+         }
+ 
++	if (! on
++	    && (mInstanceId != null && mInstanceId == 1)) {
++		riljLog("SetRadioPower: off ignored on SIM2");
++		return;
++	}
++
+         RILRequest rr = RILRequest.obtain(RIL_REQUEST_DUAL_SIM_MODE_SWITCH, result);
+ 
+         if (RILJ_LOGD) riljLog(rr.serialString() + "> " + requestToString(rr.mRequest));
+ 
+         rr.mParcel.writeInt(1);
+-        rr.mParcel.writeInt(on ? 3 : 0); // SIM1 | SIM2 ?
+-
++        rr.mParcel.writeInt(on ? 3 : -1); // SIM1 | SIM2 ?
++	riljLog("SetRadioPower: " + on);
+         send(rr);
+     }
+ 
+diff --git a/root/init.mt6589.rc b/root/init.mt6589.rc
+index d53572f..535c9cb 100644
+--- a/root/init.mt6589.rc
++++ b/root/init.mt6589.rc
+@@ -139,7 +139,7 @@ on post-fs-data
+     #VideoCodec
+     insmod /system/lib/modules/vcodec_kernel_driver.ko
+     exec /system/xbin/mknod /dev/Vcodec c 160 0
+-    chmod 0660 /dev/Vcodec
++    chmod 0666 /dev/Vcodec
+     chown system media /dev/Vcodec
+ 
+     #kpd

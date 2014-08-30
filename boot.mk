@@ -41,10 +41,7 @@ $(PRODUCT_OUT)/recovery_kernel.mtk.header: $(recovery_kernel)
 		$(call make_header, $$((size)), "KERNEL", $@)
 $(PRODUCT_OUT)/recovery_kernel.mtk: $(PRODUCT_OUT)/recovery_kernel.mtk.header
 	$(call pretty,"Adding MTK header to recovery kernel.")
-#       just use the prebuilt kernel "as is" from recovery. it has the header 
-#       already.
-#	cat $(PRODUCT_OUT)/recovery_kernel.mtk.header $(recovery_kernel) > $@
-	cat $(recovery_kernel) > $@
+	cat $(PRODUCT_OUT)/recovery_kernel.mtk.header $(recovery_kernel) > $@
 
 $(recovery_ramdisk).mtk.header: $(recovery_ramdisk)
 	size=$$($(call get-file-size,$(recovery_ramdisk))); \
@@ -54,7 +51,7 @@ $(recovery_ramdisk).mtk:  $(MKBOOTIMG) $(recovery_ramdisk).mtk.header
 	cat $(recovery_ramdisk).mtk.header $(recovery_ramdisk) > $@
 
 INTERNAL_MTK_BOOTIMAGE_ARGS := \
-		--kernel $(INSTALLED_KERNEL_TARGET) \
+		--kernel $(INSTALLED_KERNEL_TARGET).mtk \
 		--ramdisk $(INSTALLED_RAMDISK_TARGET).mtk
 
 $(INSTALLED_BOOTIMAGE_TARGET): $(MKBOOTIMG)\

@@ -13,8 +13,8 @@
 # limitations under the License.
 
 # Inherit from those products. Most specific first.
-$(call inherit-product, device/fairphone/FP1/device_FP1.mk)
-$(call inherit-product, $(SRC_TARGET_DIR)/product/full_base.mk)
+$(call inherit-product, device/fp/FP1/device_FP1.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/full_base_telephony.mk)
 
 # Configure as xhdpi device to prevent breaking without mdpi drawables
 PRODUCT_AAPT_CONFIG := normal mdpi hdpi xhdpi

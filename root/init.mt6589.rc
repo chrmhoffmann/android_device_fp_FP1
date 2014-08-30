@@ -1,25 +1,36 @@
 import init.mt6589.usb.rc
+import init.modem.rc
+import init.protect.rc
 
 on early-init
     mount debugfs /sys/kernel/debug /sys/kernel/debug
 
-on init  
-    # See storage config details at http://source.android.com/tech/storage/
-    mkdir /mnt/shell/emulated 0700 shell shell
-    mkdir /storage 0050 system sdcard_r
-   
-    mkdir /storage/sdcard0 0000 system system
-    mkdir /storage/sdcard1 0000 system system
-    mkdir /storage/usbdisk0 0000 system system
-    mkdir /cache 0771 system cache
-    
-    symlink /storage/sdcard0 /mnt/emmc
-    symlink /storage/sdcard0 /emmc
-    symlink /storage/sdcard1 /sdcard
-    symlink /storage/sdcard1 /mnt/sdcard
+on boot
+    chown root radio /proc/cmdline
 
-    export EXTERNAL_STORAGE /storage/sdcard1
-    export SECONDARY_STORAGE /storage/sdcard0
+on init  
+    mkdir /mnt/shell/emulated 0700 shell shell
+    mkdir /storage/emulated 0555 root root
+
+    mkdir /mnt/media_rw/sdcard1 0700 media_rw media_rw
+    mkdir /mnt/media_rw/usbdisk0 0700 media_rw media_rw
+    mkdir /storage/sdcard1 0700 root root
+    mkdir /storage/usbdisk0 0700 root root
+
+    symlink /storage/emulated/legacy /sdcard
+    symlink /storage/emulated/legacy /mnt/sdcard
+    symlink /storage/emulated/legacy /storage/sdcard0
+    symlink /mnt/shell/emulated/0 /storage/emulated/legacy
+
+    export EXTERNAL_STORAGE /storage/emulated/legacy
+    export SECONDARY_STORAGE /storage/sdcard1
+    export EMULATED_STORAGE_SOURCE /mnt/shell/emulated
+    export EMULATED_STORAGE_TARGET /storage/emulated
+
+    mkdir /data/media 0770 media_rw media_rw
+    chown media_rw media_rw /data/media
+
+    mkdir /cache 0771 system cache
 
     # Change ION driver permission
     chmod 0644 /dev/ion
@@ -33,11 +44,28 @@ on init
 
 on fs
     mount_all /fstab.mt6589
+    mkdir /protect_f
+    mkdir /protect_s 
+
+    chown system system /protect_f
+    chown system system /protect_s
+    chmod 0771 /protect_f
+    chmod 0771 /protect_s
+
+    # SGX
+    insmod /system/lib/modules/pvrsrvkm.ko
+    insmod /system/lib/modules/mtklfb.ko
+
+    # device info /proc interface
+    insmod /system/lib/modules/devinfo.ko
+    exec /system/xbin/mknod /dev/devmap c 196 0
+    chmod 0444 /dev/devmap
+    chown root media /dev/devmap
+    start pvrsrvctl
+
+    mkdir /dev/radio 0770 radio radio
 
 on post-fs-data
-    # we will remap this as /mnt/sdcard with the sdcard fuse tool
-    mkdir /data/media 0775 media_rw media_rw
-    chown media_rw media_rw /data/media
     setprop vold.post_fs_data_done 1
 
     # create dalvik-cache and double-check the perms, so as to enforce our permissions
@@ -54,10 +82,6 @@ on post-fs-data
     # radvd
     mkdir /data/misc/radvd 0770 system system
     chmod 444 /etc/radvd/radvd.conf
-
-    # SGX
-    insmod /system/lib/modules/pvrsrvkm.ko
-    insmod /system/lib/modules/mtklfb.ko
 
     # Permissions for System Server and daemons.
     chown root   radio  /sys/class/leds/lcd-backlight/brightness
@@ -200,12 +224,6 @@ on post-fs-data
     # device apc settings
     insmod /system/lib/modules/devapc.ko
 
-    # device info /proc interface
-    insmod /system/lib/modules/devinfo.ko
-    exec /system/xbin/mknod /dev/devmap c 196 0
-    chmod 0444 /dev/devmap
-    chown root media /dev/devmap
-
     #/dev/ttyMT2 for 662x_launcher
     chmod 0660 /dev/ttyMT2
     chown system system /dev/ttyMT2
@@ -240,9 +258,17 @@ on post-fs-data
 
     # FM Radio device, FIXME: this is not a proper way to set permissions
     chmod 0666 /dev/fm
+
     # GPS
     chmod 0666 /dev/gps
     chmod 0660 /dev/stpgps
+    mkdir /data/agps_supl 0771 gps system
+    chown gps gps /dev/stpgps
+    chown gps gps /sys/class/gpsdrv/gps/pwrctl
+    chown gps gps /sys/class/gpsdrv/gps/suspend
+    chown gps gps /sys/class/gpsdrv/gps/state
+    chown gps gps /sys/class/gpsdrv/gps/pwrsave
+    chown gps gps /sys/class/gpsdrv/gps/status
 
     # WiFi
     mkdir /data/misc/wifi 0770 wifi wifi
@@ -287,6 +313,9 @@ on post-fs-data
     chmod 0660 /dev/kd_camera_hw_bus2
     chmod 0660 /dev/FM50AF
     chmod 0660 /dev/CAM_CAL_DRV
+    chmod 0660 /dev/IMX135AF
+    chmod 0660 /dev/IMX091AF
+    chmod 0660 /dev/IMX092AF
 
     chown system camera /dev/camera-sysram
     chown system camera /dev/camera-isp
@@ -296,6 +325,9 @@ on post-fs-data
     chown system camera /dev/kd_camera_hw_bus2
     chown system camera /dev/FM50AF
     chown system camera /dev/CAM_CAL_DRV
+    chown system camera /dev/IMX135AF
+    chown system camera /dev/IMX091AF
+    chown system camera /dev/IMX092AF
 
     #MATV
     chmod 0660 /dev/MATV
@@ -316,11 +348,11 @@ on post-fs-data
     #for eng mode
     chmod 0664 /dev/misc-sd
 
-    chmod 0660 /sys/bus/platform/drivers/mem_bw_ctrl/concurrency_scenario
+    chmod 0666 /sys/bus/platform/drivers/mem_bw_ctrl/concurrency_scenario
     chown system media /sys/bus/platform/drivers/mem_bw_ctrl/concurrency_scenario
 
     # SMI
-    chmod 0660 /dev/MTK_SMI
+    chmod 0666 /dev/MTK_SMI
     chown system media /dev/MTK_SMI
 
     # mtk_sched
@@ -332,21 +364,59 @@ on post-fs-data
     chown dhcp dhcp /data/misc/dhcp/dnsmasq.leases
     chown dhcp dhcp /data/misc/dhcp/dnsmasq.p2p0.leases
 
+    chown root radio /proc/cmdline
+
+    ## Thermal
+    #change permissions on thermal devices
+    chown root system /proc/mtktscpu/mtktscpu
+    chmod 0660 /proc/mtktscpu/mtktscpu
+    chown root system /proc/mtktsbattery/mtktsbattery
+    chmod 0660 /proc/mtktsbattery/mtktsbattery
+    chown root system /proc/mtktspa/mtktspa
+    chmod 0660 /proc/mtktspa/mtktspa
+    chown root system /proc/mtktspmic/mtktspmic
+    chmod 0660 /proc/mtktspmic/mtktspmic
+    chown root system /proc/driver/mtk_thermal_monitor
+    chmod 0660 /proc/driver/mtk_thermal_monitor
+    chown root radio /proc/driver/mtm_scen_call
+    chmod 0660 /proc/driver/mtm_scen_call
+    chown system system /proc/gpufreq/gpufreq_loading_state
+    chmod 0660 /proc/gpufreq/gpufreq_loading_state
+    chown root system /proc/wmt_tm/wmt_tm
+    chown system system /proc/wmt_tm/tm_pid
+    chown system system /proc/wmt_tm/tx_thro
+    chown system system /proc/wmt_tm/wmt_val
+    chown system system /proc/wmt_tm/wfd_stat
+
 # SGX init
 service pvrsrvctl /system/vendor/bin/pvrsrvctl --start
     class main
     user root
     group root
     oneshot
+    disabled
+
+# Connectivity related services
+service hald /system/bin/hald
+    class main
+    socket hald stream 0660 root system
+    user system
+    group system radio mount wifi inet net_admin
+
+service stp_dump /system/bin/stp_dump3
+    user system
+    group system net_admin
+    class main
 
 service 662x_launcher /system/bin/logwrapper /system/bin/6620_launcher -b 4000000 -p /system/etc/firmware/ -d /dev/ttyMT2
     user system
     group system
-    oneshot
+    class core
 
 service wlanLoader /system/bin/wlan_loader
     user root
     group root
+    class main
     oneshot
 
 service nvram_daemon /system/bin/nvram_daemon
@@ -358,7 +428,6 @@ service nvram_daemon /system/bin/nvram_daemon
 service NvRAMAgent /system/bin/nvram_agent_binder
     user system
     group system nvram
-
 
 service pq /system/bin/pq
     class main
@@ -384,7 +453,11 @@ service p2p_supplicant /system/bin/logwrapper /system/bin/wpa_supplicant \
 	oneshot
 
 service wpa_supplicant /system/bin/logwrapper /system/bin/wpa_supplicant \
-	-iwlan0 -Dnl80211 -c/data/misc/wifi/wpa_supplicant.conf -e/data/misc/wifi/entropy.bin -ddd
+	-iwlan0 -Dnl80211 -c/data/misc/wifi/wpa_supplicant.conf \
+	-I/system/etc/wifi/wpa_supplicant_overlay.conf \
+	-O/data/misc/wifi/sockets \
+	-e/data/misc/wifi/entropy.bin -g@android:wpa_wlan0 \
+	-ddd
 	#   we will start as root and wpa_supplicant will switch to user wifi
 	#   after setting up the capabilities required for WEXT
 	#   user wifi
@@ -403,7 +476,6 @@ service ap_daemon /system/bin/wpa_supplicant \
 	class main
 	disabled
 	oneshot
-
 
 service dhcpcd_wlan0 /system/bin/logwrapper /system/bin/dhcpcd -A -BK -dd
     class main
@@ -439,3 +511,79 @@ on property:service.dhcp6c_wlan0.enable=0
 on property:service.dhcp6c_wlan0.enable=1
     start dhcp6c_wlan0
 
+# sensor services
+service msensord /system/bin/msensord
+    class main
+    oneshot
+
+service ami304d /system/bin/logwrapper /system/bin/ami304d
+    user system
+    group system
+    disabled
+    oneshot
+
+service memsicd /system/bin/memsicd
+    disabled
+    oneshot
+    user system
+    group system
+
+service akmd8975 /system/bin/akmd8975
+    disabled
+    user system
+    group system
+
+service akmd8963 /system/bin/akmd8963
+    disabled
+    user system
+    group system
+
+service bmm050d /system/bin/bmm050d
+    disabled
+    user system
+    group system
+
+service orientationd /system/bin/orientationd
+    disabled
+    user system
+    group system input
+
+service geomagneticd /system/bin/geomagneticd
+    disabled
+    user system
+    group system input
+
+# thermal
+service thermal_manager /system/bin/thermal_manager
+    user root
+    oneshot
+
+service thermal /system/bin/thermal
+    user system
+    group system
+
+# gps
+service agpsd /system/bin/mtk_agpsd
+    class main
+    socket agpsd stream 660 gps system
+    user gps
+    group gps ccci inet sdcard_rw misc
+
+service mnld /system/xbin/mnld
+    user gps
+    group nvram gps inet misc sdcard_rw
+    socket mnld stream 660 gps system
+    disabled
+
+
+# virtual sdcard daemon running as media_rw (1023)
+service sdcard /system/bin/sdcard -u 1023 -g 1023 -l /data/media /mnt/shell/emulated
+    class late_start
+
+service fuse_sdcard1 /system/bin/sdcard -u 1023 -g 1023 /mnt/media_rw/sdcard1 /storage/sdcard1
+    class late_start
+    disabled
+
+service fuse_usbdisk0 /system/bin/sdcard -u 1023 -g 1023 -d /mnt/media_rw/usbdisk0 /storage/usbdisk0
+    class late_start
+    disabled
